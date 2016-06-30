@@ -1,9 +1,9 @@
-Whitespace = require './whitespace'
+WhitespaceEnhanced = require './whitespace'
 
 module.exports =
   activate: ->
-    @whitespace = new Whitespace()
+    @whitespace_enhanced = new WhitespaceEnhanced()
 
   deactivate: ->
-    @whitespace?.destroy()
-    @whitespace = null
+    @whitespace_enhanced?.destroy()
+    @whitespace_enhanced = null

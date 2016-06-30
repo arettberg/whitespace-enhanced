@@ -1,5 +1,5 @@
 {
-  "name": "whitespace",
+  "name": "whitespace-enhanced",
   "version": "0.33.0",
   "main": "./lib/main",
   "description": "Strips trailing whitespace and adds a trailing newline when an editor is saved.",
@@ -9,7 +9,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "fs-plus": "2.x",
+    "fs-plus": "^2.0.0",
     "temp": "~0.8.1"
   },
   "configSchema": {
@@ -37,6 +37,11 @@
       "type": "boolean",
       "default": false,
       "description": "Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
+    "ignoreUnmodifiedLines": {
+      "type": "boolean",
+      "default": true,
+      "description": "Only trim whitespace from lines that have been modified since the last git commit."
     },
     "ensureSingleTrailingNewline": {
       "type": "boolean",
