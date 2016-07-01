@@ -67,7 +67,7 @@ class WhitespaceEnhanced
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace, range}) =>
       try
-        return if ignoreUnmodifiedLines and !((range.start.row + 1) in @modifiedLines)
+        return if ignoreUnmodifiedLines and (@modifiedLines instanceof Array) and !((range.start.row + 1) in @modifiedLines)
 
         whitespaceRow = buffer.positionForCharacterIndex(match.index).row
         cursorRows = (cursor.getBufferRow() for cursor in editor.getCursors())
@@ -127,15 +127,18 @@ class WhitespaceEnhanced
       @repository?.getLineDiffs(path, editor.getText())
         .catch (e) =>
           if e.message.match(/does not exist in the given tree/)
-            []
+            true
           else
             Promise.reject(e)
         .then (diffs) =>
-          @modifiedLines = diffs.reduce (lines, diff) ->
-            lineNumber = diff.newStart
-            lines.push(lineNumber++) for i in [0...diff.newLines]
-            return lines
-          , []
+          if diffs is true
+            @modifiedLines = true
+          else
+            @modifiedLines = diffs.reduce (lines, diff) ->
+              lineNumber = diff.newStart
+              lines.push(lineNumber++) for i in [0...diff.newLines]
+              return lines
+            , []
 
         .catch (e) ->
           console.error('Error getting line diffs for ' + path + ':')
