@@ -7,7 +7,6 @@ class WhitespaceEnhanced
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @handleEvents(editor)
-      @subscribeToRepository(editor)
 
     @subscriptions.add atom.commands.add 'atom-workspace',
       'whitespace-enhanced:remove-trailing-whitespace': =>
@@ -115,31 +114,19 @@ class WhitespaceEnhanced
 
     editor.setSoftTabs(false)
 
-  subscribeToRepository: (editor) ->
-    @repository = repositoryForPath(editor.getPath())
-
   getModifiedLines: (editor) ->
     return if editor.isDestroyed()
 
     @modifiedLines = @modifiedLines || []
 
     if path = editor?.getPath()
-      @repository?.getLineDiffs(path, editor.getText())
-        .catch (e) =>
-          if e.message.match(/does not exist in the given tree/)
-            true
-          else
-            Promise.reject(e)
-        .then (diffs) =>
-          if diffs is true
-            @modifiedLines = true
-          else
-            @modifiedLines = diffs.reduce (lines, diff) ->
-              lineNumber = diff.newStart
-              lines.push(lineNumber++) for i in [0...diff.newLines]
-              return lines
-            , []
+      diffs = repositoryForPath(editor.getPath())?.getLineDiffs(editor.getPath(), editor.getText()) ? []
 
-        .catch (e) ->
-          console.error('Error getting line diffs for ' + path + ':')
-          console.error(e)
+      if diffs is true
+        @modifiedLines = true
+      else
+        @modifiedLines = diffs.reduce (lines, diff) ->
+          lineNumber = diff.newStart
+          lines.push(lineNumber++) for i in [0...diff.newLines]
+          return lines
+        , []
