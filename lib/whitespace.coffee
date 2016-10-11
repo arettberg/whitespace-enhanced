@@ -120,7 +120,7 @@ class WhitespaceEnhanced
     @modifiedLines = @modifiedLines || []
 
     if path = editor?.getPath()
-      diffs = repositoryForPath(editor.getPath())?.getLineDiffs(editor.getPath(), editor.getText()) ? []
+      diffs = repositoryForPath(editor.getPath())?.getLineDiffs(editor.getPath(), editor.getText()) ? true
 
       if diffs is true
         @modifiedLines = true
